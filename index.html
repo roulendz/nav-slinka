@@ -116,98 +116,99 @@
     ];
 
    // Function to generate a random pastel color
-    function getRandomPastelColor() {
-      const r = Math.floor((Math.random() * 127) + 127); // 127-254 range for pastel shades
-      const g = Math.floor((Math.random() * 127) + 127);
-      const b = Math.floor((Math.random() * 127) + 127);
-      return `rgb(${r}, ${g}, ${b})`;
-    }
+function getRandomPastelColor() {
+  const r = Math.floor((Math.random() * 127) + 127); // 127-254 range for pastel shades
+  const g = Math.floor((Math.random() * 127) + 127);
+  const b = Math.floor((Math.random() * 127) + 127);
+  return `rgb(${r}, ${g}, ${b})`;
+}
 
-    // Function to determine quote type based on subdomain
-    function getQuotes() {
-      const hostname = window.location.hostname;
-      if (hostname.startsWith("ir")) return funnyQuotes;
-      else if (hostname.startsWith("nav")) return seriousQuotes;
-      return funnyQuotes;
-    }
+// Function to determine quote type based on subdomain
+function getQuotes() {
+  const hostname = window.location.hostname;
+  if (hostname.startsWith("ir")) return funnyQuotes;
+  else if (hostname.startsWith("nav")) return seriousQuotes;
+  return funnyQuotes;
+}
 
-    const quotes = getQuotes();
-    let currentQuoteIndex = 0;
-    const loadingIndicator = document.getElementById('loadingIndicator');
+const quotes = getQuotes();
+let currentQuoteIndex = 0;
+const loadingIndicator = document.getElementById('loadingIndicator');
 
-    // Load the last quote index from local storage, if available
-    if (localStorage.getItem('lastQuoteIndex')) {
-      currentQuoteIndex = parseInt(localStorage.getItem('lastQuoteIndex'), 10);
-    }
+// Load the last quote index from local storage, if available
+if (localStorage.getItem('lastQuoteIndex')) {
+  currentQuoteIndex = parseInt(localStorage.getItem('lastQuoteIndex'), 10);
+}
 
-    function displayQuote() {
-      const quoteText = document.getElementById('quoteText');
-      const quoteAuthor = document.getElementById('quoteAuthor');
+function displayQuote() {
+  const quoteText = document.getElementById('quoteText');
+  const quoteAuthor = document.getElementById('quoteAuthor');
 
-      // Fade out text and loading indicator
-      quoteText.classList.remove('show');
-      quoteAuthor.classList.remove('show');
-      loadingIndicator.style.opacity = "0"; // Fade out loading bar
+  // Fade out text and loading indicator
+  quoteText.classList.remove('show');
+  quoteAuthor.classList.remove('show');
+  loadingIndicator.style.opacity = "0"; // Fade out loading bar
 
-      // After fade-out, change quote text and fade back in
-      setTimeout(() => {
-        const quote = quotes[currentQuoteIndex];
-        quoteText.innerText = `"${quote.text}"`;
-        quoteAuthor.innerText = `- ${quote.author}`;
-        
-        // Update the current quote index and save it to local storage
-        currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
-        localStorage.setItem('lastQuoteIndex', currentQuoteIndex);
+  // After fade-out, change quote text and fade back in
+  setTimeout(() => {
+    const quote = quotes[currentQuoteIndex];
+    quoteText.innerText = `"${quote.text}"`;
+    quoteAuthor.innerText = `- ${quote.author}`;
+    
+    // Update the current quote index and save it to local storage
+    currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+    localStorage.setItem('lastQuoteIndex', currentQuoteIndex);
 
-        // Fade in text and loading indicator
-        quoteText.classList.add('show');
-        quoteAuthor.classList.add('show');
-        resetLoadingBar(); // Start loading animation with fade-in
+    // Fade in text and loading indicator
+    quoteText.classList.add('show');
+    quoteAuthor.classList.add('show');
+    resetLoadingBar(); // Start loading animation with fade-in
 
-        // Change background color smoothly to a random pastel color
-        document.body.style.backgroundColor = getRandomPastelColor();
-      }, 500); // Timeout matches the CSS transition duration
-    }
+    // Change background color and update slider color to match
+    const newColor = getRandomPastelColor();
+    document.body.style.backgroundColor = newColor;
+    loadingIndicator.style.backgroundColor = newColor;
+  }, 500); // Timeout matches the CSS transition duration
+}
 
-    function resetLoadingBar() {
-      // Fade in the loading indicator
-      loadingIndicator.style.opacity = "1";
-      
-      // Reset width to 0% without transition
-      loadingIndicator.style.transition = "none";
-      loadingIndicator.style.width = "0%";
+function resetLoadingBar() {
+  // Fade in the loading indicator
+  loadingIndicator.style.opacity = "1";
+  
+  // Reset width to 0% without transition
+  loadingIndicator.style.transition = "none";
+  loadingIndicator.style.width = "0%";
 
-      // Allow the reset to take effect before starting the transition
-      setTimeout(() => {
-        loadingIndicator.style.transition = "width 7s linear, opacity 0.5s ease";
-        loadingIndicator.style.width = "100%";
-      }, 10);
+  // Allow the reset to take effect before starting the transition
+  setTimeout(() => {
+    loadingIndicator.style.transition = "width 7s linear, opacity 0.5s ease";
+    loadingIndicator.style.width = "100%";
+  }, 10);
 
-      // Fade out the loading indicator at the end of the animation
-      setTimeout(() => {
-        loadingIndicator.style.opacity = "0";
-      }, 6500); // Fade out slightly before the end of the 7-second animation
-    }
+  // Fade out the loading indicator at the end of the animation
+  setTimeout(() => {
+    loadingIndicator.style.opacity = "0";
+  }, 6500); // Fade out slightly before the end of the 7-second animation
+}
 
-    // Show the first quote immediately or the last saved quote
-    displayQuote();
+// Show the first quote immediately or the last saved quote
+displayQuote();
 
-    // Change quote every 7 seconds
-    let quoteInterval = setInterval(displayQuote, 7000);
+// Change quote every 7 seconds
+let quoteInterval = setInterval(displayQuote, 7000);
 
-    // Add touch/click to advance the quote and reset the timer
-    document.addEventListener('click', () => {
-      displayQuote();
-      clearInterval(quoteInterval); // Reset interval on manual change
-      quoteInterval = setInterval(displayQuote, 7000); // Restart interval
-    });
+// Add touch/click to advance the quote and reset the timer
+document.addEventListener('click', () => {
+  displayQuote();
+  clearInterval(quoteInterval); // Reset interval on manual change
+  quoteInterval = setInterval(displayQuote, 7000); // Restart interval
+});
 
-    document.addEventListener('touchstart', () => {
-      displayQuote();
-      clearInterval(quoteInterval); // Reset interval on manual change
-      quoteInterval = setInterval(displayQuote, 7000); // Restart interval
-    });
-
+document.addEventListener('touchstart', () => {
+  displayQuote();
+  clearInterval(quoteInterval); // Reset interval on manual change
+  quoteInterval = setInterval(displayQuote, 7000); // Restart interval
+});
 
 
   </script>
