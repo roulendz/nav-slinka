@@ -146,9 +146,9 @@ function getRandomPastelColor() {
 
 // Function to determine quote type based on subdomain
 function getQuotes() {
+  const params = new URLSearchParams(window.location.search);
   const hostname = window.location.hostname;
-  if (hostname.startsWith("ir")) return funnyQuotes;
-  else if (hostname.startsWith("nav")) return seriousQuotes;
+  if (params.has("nav") || hostname.startsWith("nav")) return seriousQuotes;
   return funnyQuotes;
 }
 
